@@ -61,6 +61,7 @@ const Dashboard = () => {
       <div className="bg-light p-3 vh-100" style={{ width: "250px" }}>
         <h4 className="mb-4">BillMax 2024</h4>
         {/* Dummy Nav bar -- no other current components */}
+        {/* Active tab will be blue and all others gray. */}
         <Nav className="flex-column">
           <Nav.Link style={{ color: "gray" }} href="#">
             Dashboard
@@ -103,7 +104,7 @@ const Dashboard = () => {
 
         <h3 style={{ marginBottom: "20px" }}>Accounts</h3>
 
-        {/* Action Buttons */}
+        {/* Action Buttons - Only filter button currently works. Others are placement dummies */}
         <Row className="mb-3">
           <Col>
             <Button variant="primary" className="me-2">
@@ -127,7 +128,7 @@ const Dashboard = () => {
           </Col>
         </Row>
 
-        {/* Table */}
+        {/* Table - Main component storing the data*/}
         <div className="overflow-auto bg-white p-2 rounded shadow-sm">
           <Table bordered hover className="w-100">
             <thead>
@@ -140,6 +141,7 @@ const Dashboard = () => {
                 <th>Status</th>
                 <th>Date</th>
               </tr>
+              {/* Searching functionality supported here */}
               <tr>
                 <th>
                   <Form.Control type="text" placeholder="Search" />
@@ -170,6 +172,7 @@ const Dashboard = () => {
                 </th>
               </tr>
             </thead>
+            {/*Display filtered mock data here*/}
             <tbody>
               {filteredData.map((item) => (
                 <tr key={item.id}>
@@ -197,6 +200,9 @@ const Dashboard = () => {
           <Offcanvas.Title>Filters</Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body>
+          {/* Accordions are the dropdowns you can click to expand the filters.
+          Currently 4 filters of 3 different times are supported - company, status, email, and date.
+          Company and email are text-based, status is a checkbox, and date is a date format. */}
           <Accordion>
             <Accordion.Item eventKey="0">
               <Accordion.Header>Company</Accordion.Header>
@@ -252,6 +258,7 @@ const Dashboard = () => {
                     setFilters({ ...filters, date: e.target.value })
                   }
                 />
+                {/* Added a clear date button because it's hard to clear the date otherwise */}
                 <Button
                   variant="outline-secondary"
                   className="mt-2 w-100"
@@ -262,6 +269,7 @@ const Dashboard = () => {
               </Accordion.Body>
             </Accordion.Item>
           </Accordion>
+          {/* Buttons to apply all filters and clear all filters */}
           <Button
             variant="primary"
             className="w-100 mt-3"

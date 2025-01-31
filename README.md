@@ -13,4 +13,4 @@ I started by generating the frontend infrastructure + general framework using Ge
 I decided to use React for its state hooks to make dynamic modification to the interface for filtering. For styling, I decided to use the bootstrap library for CSS because of familiarity.
 
 ### Limitations
-Two large limitation of this interface currently are the dynamic viewport adjustment and accessibility. I did not choose to include aria-labels and tags for accessibility and I did not design the interface for smaller screen sizes, so there are a lot of styling issues on smaller screen sizes currently. I unfortunately do not have the time to work on this too much.
+Two large limitation of this interface currently are the dynamic viewport adjustment and accessibility. I did not choose to include aria-labels and tags for accessibility and I did not design the interface for smaller screen sizes, so there are currently a lot of styling issues on smaller screen sizes.
