@@ -7,6 +7,8 @@ To run the project:
 - Run `npm run dev` in the terminal.
 The interface should now be available at http://localhost:5173/
 
+Note: The main dashboard code will be in /my-dashboard/src/App.jsx
+
 ### Approach
 I started by generating the frontend infrastructure + general framework using Generative AI to match the specifications of the Figma as a starting point, and then I added all the extra functionality like filtering and searching and sorting on top of that framework. I created a mock dataset in data/mockAccounts.js with 5 example data points to use for the project. For sorting, I added a toggle button next to the header of each table column that sorts all the data using that column in either ascending or descending order depending on the button toggle.
 
