@@ -9,12 +9,15 @@ import {
   Navbar,
   Nav,
   Offcanvas,
-  Accordion
+  Accordion,
+  Dropdown
 } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { mockData } from "./data/mockAccounts.js";
 
 const Dashboard = () => {
+  /* STATE HOOKS */
+
   //state hook to control whether filter bar is showing or not
   const [showFilters, setShowFilters] = useState(false);
   //state hook to control filters
@@ -41,6 +44,20 @@ const Dashboard = () => {
     phone: "",
     email: ""
   });
+  const [sortConfig, setSortConfig] = useState({ key: "", direction: "" });
+
+  /* END OF STATE HOOKS */
+
+  /* FUNCTIONS */
+
+  //Sorting function to toggle on click
+  const toggleSort = (key) => {
+    let direction = "asc";
+    if (sortConfig.key === key && sortConfig.direction === "asc") {
+      direction = "desc";
+    }
+    setSortConfig({ key, direction });
+  };
 
   //only apply filters upon enter key press or button click
   const handleFilterKeyPress = (event) => {
@@ -64,7 +81,7 @@ const Dashboard = () => {
     setAppliedFilters({ date: "", balance: "", status: "" });
   };
 
-  //function called to clear all search specifications
+  //function called to clear all search specifications upon button press
   const clearAllSearch = () => {
     setSearchValues({
       id: "",
@@ -81,6 +98,13 @@ const Dashboard = () => {
       email: "",
     });
   };
+
+  //function to clear sorts upon button press
+  const clearSorts = () => {
+    setSortConfig({ key: "", direction: "" });
+  };
+
+  /* END OF FUNCTIONS */
 
   //data to display on the screen after filters
   //apply filters first, and then apply searches
@@ -111,7 +135,21 @@ const Dashboard = () => {
           item.email
             .toLowerCase()
             .includes(appliedSearch.email.toLowerCase()))
-    );
+    ).sort((a, b) => {
+        if (!sortConfig.key) return 0; //if no sort key, short circuit
+
+        let valA = a[sortConfig.key];
+        let valB = b[sortConfig.key];
+
+        if (typeof valA === "string") {
+          valA = valA.toLowerCase();
+          valB = valB.toLowerCase();
+        }
+
+        if (valA < valB) return sortConfig.direction === "asc" ? -1 : 1;
+        if (valA > valB) return sortConfig.direction === "asc" ? 1 : -1;
+        return 0;
+      });
 
   return (
     <div className="d-flex">
@@ -160,7 +198,7 @@ const Dashboard = () => {
           </Nav>
         </Navbar>
 
-        <h3 style={{ marginBottom: "20px" }}>Accounts</h3>
+        <h2 style={{ marginBottom: "20px" }}>Accounts</h2>
 
         {/* Action Buttons - Only filter button currently works. Others are placement dummies */}
         <Row className="mb-3">
@@ -191,14 +229,34 @@ const Dashboard = () => {
           <Table bordered hover className="w-100">
             <thead>
               <tr>
-                <th>Account Number</th>
-                <th>Company</th>
-                <th>Contact</th>
-                <th>Phone Number</th>
-                <th>Email</th>
-                <th>Status</th>
-                <th>Date Created</th>
-                <th>Balance</th>
+                {/* Headers of table columns along with the sort button */}
+                {[
+                  "id",
+                  "company",
+                  "contact",
+                  "phone",
+                  "email",
+                  "status",
+                  "date",
+                  "balance",
+                ].map((key) => (
+                  <th key={key}>
+                    <div className="d-flex justify-content-between align-items-center">
+                      {key.charAt(0).toUpperCase() + key.slice(1)}
+                      <Button
+                        variant="light"
+                        size="sm"
+                        onClick={() => toggleSort(key)}
+                      >
+                        {sortConfig.key === key
+                          ? sortConfig.direction === "asc"
+                            ? "▲"
+                            : "▼"
+                          : "⇅"}
+                      </Button>
+                    </div>
+                  </th>
+                ))}
               </tr>
               {/* Searching functionality supported here */}
               <tr>
@@ -287,6 +345,10 @@ const Dashboard = () => {
               ))}
             </tbody>
           </Table>
+          {/* Button to clear sorting */}
+          <Button variant="danger" onClick={clearSorts} className="mt-2" style={{marginRight: '0.5em'}}>
+            Clear All Sorts
+          </Button>
           {/* Button to clear all searches and reset table data */}
           <Button variant="danger" className="mt-2" onClick={clearAllSearch}>
             Clear Search Values
