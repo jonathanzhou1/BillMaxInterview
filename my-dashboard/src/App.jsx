@@ -18,42 +18,100 @@ const Dashboard = () => {
   //state hook to control whether filter bar is showing or not
   const [showFilters, setShowFilters] = useState(false);
   //state hook to control filters
-  const [filters, setFilters] = useState({ company: "", status: "", email: "", date: "" });
+  const [filters, setFilters] = useState({ date: "", balance: "", status: "" });
   //state hook to apply filter changes upon enter or button click
   const [appliedFilters, setAppliedFilters] = useState({
-    company: "",
-    status: "",
-    email: "",
     date: "",
+    balance: "",
+    status: ""
+  });
+  //state hook for search values
+  const [searchValues, setSearchValues] = useState({
+    id: "",
+    company: "",
+    contact: "",
+    phone: "",
+    email: ""
+  });
+  //state hook to apply searches upon enter or button click
+  const [appliedSearch, setAppliedSearch] = useState({
+    id: "",
+    company: "",
+    contact: "",
+    phone: "",
+    email: ""
   });
 
   //only apply filters upon enter key press or button click
-  const handleKeyPress = (event) => {
+  const handleFilterKeyPress = (event) => {
     if (event.key === "Enter") {
       setAppliedFilters({ ...filters });
     }
   }
 
+  //apply searches upon enter key press
+  const handleSearchKeyPress = (event) => {
+    if (event.key === "Enter") {
+      setAppliedSearch({ ...searchValues });
+    }
+  };
+
   //function called to clear all filters and apply them
   //need to manually specify empty filters to apply in case setFilters hasn't finished
   //executing yet...
   const clearAllFilters = () => {
-    setFilters({ company: "", status: "", email: "", date: "" });
-    setAppliedFilters({ company: "", status: "", email: "", date: "" });
+    setFilters({ date: "", balance: "", status: "" });
+    setAppliedFilters({ date: "", balance: "", status: "" });
+  };
+
+  //function called to clear all search specifications
+  const clearAllSearch = () => {
+    setSearchValues({
+      id: "",
+      company: "",
+      contact: "",
+      phone: "",
+      email: "",
+    });
+    setAppliedSearch({
+      id: "",
+      company: "",
+      contact: "",
+      phone: "",
+      email: "",
+    });
   };
 
   //data to display on the screen after filters
-  let filteredData = mockData.filter(
-    (item) =>
-      (appliedFilters.company === "" ||
-        item.company
-          .toLowerCase()
-          .includes(appliedFilters.company.toLowerCase())) &&
-      (appliedFilters.status === "" || item.status === appliedFilters.status) &&
-      (appliedFilters.email === "" ||
-        item.email.toLowerCase().includes(appliedFilters.email.toLowerCase())) &&
-      (appliedFilters.date === "" || item.date === appliedFilters.date)
-  );
+  //apply filters first, and then apply searches
+  let filteredData = mockData
+    .filter(
+      (item) =>
+        (appliedFilters.date === "" ||
+          new Date(item.date) >= new Date(appliedFilters.date)) &&
+        (appliedFilters.balance === "" ||
+          item.balance > parseFloat(appliedFilters.balance)) &&
+        (appliedFilters.status === "" || item.status === appliedFilters.status)
+    )
+    .filter(
+      (item) =>
+        (appliedSearch.id === "" ||
+          item.id.toString().includes(appliedSearch.id)) &&
+        (appliedSearch.company === "" ||
+          item.company
+            .toLowerCase()
+            .includes(appliedSearch.company.toLowerCase())) &&
+        (appliedSearch.contact === "" ||
+          item.contact
+            .toLowerCase()
+            .includes(appliedSearch.contact.toLowerCase())) &&
+        (appliedSearch.phone === "" ||
+          item.phone.includes(appliedSearch.phone)) &&
+        (appliedSearch.email === "" ||
+          item.email
+            .toLowerCase()
+            .includes(appliedSearch.email.toLowerCase()))
+    );
 
   return (
     <div className="d-flex">
@@ -139,36 +197,77 @@ const Dashboard = () => {
                 <th>Phone Number</th>
                 <th>Email</th>
                 <th>Status</th>
-                <th>Date</th>
+                <th>Date Created</th>
+                <th>Balance</th>
               </tr>
               {/* Searching functionality supported here */}
               <tr>
                 <th>
-                  <Form.Control type="text" placeholder="Search" />
+                  <Form.Control
+                    type="text"
+                    placeholder="Search"
+                    value={searchValues.id}
+                    onChange={(e) =>
+                      setSearchValues({ ...searchValues, id: e.target.value })
+                    }
+                    onKeyUp={handleSearchKeyPress}
+                  />
                 </th>
                 <th>
-                  <Form.Control type="text" placeholder="Search" />
+                  <Form.Control
+                    type="text"
+                    placeholder="Search"
+                    value={searchValues.company}
+                    onChange={(e) =>
+                      setSearchValues({
+                        ...searchValues,
+                        company: e.target.value,
+                      })
+                    }
+                    onKeyUp={handleSearchKeyPress}
+                  />
                 </th>
                 <th>
-                  <Form.Control type="text" placeholder="Search" />
+                  <Form.Control
+                    type="text"
+                    placeholder="Search"
+                    value={searchValues.contact}
+                    onChange={(e) =>
+                      setSearchValues({
+                        ...searchValues,
+                        contact: e.target.value,
+                      })
+                    }
+                    onKeyUp={handleSearchKeyPress}
+                  />
                 </th>
                 <th>
-                  <Form.Control type="text" placeholder="Search" />
+                  <Form.Control
+                    type="text"
+                    placeholder="Search"
+                    value={searchValues.phone}
+                    onChange={(e) =>
+                      setSearchValues({
+                        ...searchValues,
+                        phone: e.target.value,
+                      })
+                    }
+                    onKeyUp={handleSearchKeyPress}
+                  />
                 </th>
                 <th>
-                  <Form.Control type="text" placeholder="Search" />
-                </th>
-                <th>
-                  <Form.Select>
-                    <option>All</option>
-                    <option>Closed</option>
-                    <option>Open</option>
-                    <option>Collections</option>
-                    <option>Suspended</option>
-                  </Form.Select>
-                </th>
-                <th>
-                  <Form.Control type="text" placeholder="Search" />
+                  <Form.Control
+                    type="text"
+                    placeholder="Search"
+                    value={searchValues.email}
+                    onChange={(e) =>
+                      setSearchValues({
+                        ...searchValues,
+                        email: e.target.value,
+                      })
+                    }
+                    onKeyUp={handleSearchKeyPress}
+                  />
                 </th>
               </tr>
             </thead>
@@ -183,10 +282,15 @@ const Dashboard = () => {
                   <td>{item.email}</td>
                   <td>{item.status}</td>
                   <td>{item.date}</td>
+                  <td>{item.balance.toFixed(2)}</td>
                 </tr>
               ))}
             </tbody>
           </Table>
+          {/* Button to clear all searches and reset table data */}
+          <Button variant="danger" className="mt-2" onClick={clearAllSearch}>
+            Clear Search Values
+          </Button>
         </div>
       </Container>
 
@@ -205,20 +309,6 @@ const Dashboard = () => {
           Company and email are text-based, status is a checkbox, and date is a date format. */}
           <Accordion>
             <Accordion.Item eventKey="0">
-              <Accordion.Header>Company</Accordion.Header>
-              <Accordion.Body>
-                <Form.Control
-                  type="text"
-                  placeholder="Search company"
-                  value={filters.company}
-                  onChange={(e) =>
-                    setFilters({ ...filters, company: e.target.value })
-                  }
-                  onKeyUp={handleKeyPress}
-                />
-              </Accordion.Body>
-            </Accordion.Item>
-            <Accordion.Item eventKey="1">
               <Accordion.Header>Status</Accordion.Header>
               <Accordion.Body>
                 <Form.Select
@@ -234,22 +324,22 @@ const Dashboard = () => {
                 </Form.Select>
               </Accordion.Body>
             </Accordion.Item>
-            <Accordion.Item eventKey="2">
-              <Accordion.Header>Email</Accordion.Header>
+            <Accordion.Item eventKey="1">
+              <Accordion.Header>Balance (Greater Than)</Accordion.Header>
               <Accordion.Body>
                 <Form.Control
-                  type="email"
-                  placeholder="Search email"
-                  value={filters.email}
+                  type="number"
+                  placeholder="Enter min balance"
+                  value={filters.balance}
                   onChange={(e) =>
-                    setFilters({ ...filters, email: e.target.value })
+                    setFilters({ ...filters, balance: e.target.value })
                   }
-                  onKeyUp={handleKeyPress}
+                  onKeyUp={handleFilterKeyPress}
                 />
               </Accordion.Body>
             </Accordion.Item>
-            <Accordion.Item eventKey="3">
-              <Accordion.Header>Date</Accordion.Header>
+            <Accordion.Item eventKey="2">
+              <Accordion.Header>Date (On or After)</Accordion.Header>
               <Accordion.Body>
                 <Form.Control
                   type="date"
